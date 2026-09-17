@@ -1,0 +1,698 @@
+// LeadPulz AI — multi-tenant data model (PostgreSQL / Supabase)
+//
+// Hierarchy: Platform → Organization → Workspace → Members / Agents / Numbers / Calls / Leads / Campaigns
+// Every tenant-scoped table carries organization_id; enforce isolation with RLS
+// policies (see supabase/policies.sql) in addition to application-level checks.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/* ───────────── Identity & tenancy ───────────── */
+
+model User {
+  id            String   @id @default(cuid())
+  fullName      String
+  email         String   @unique
+  phone         String?
+  country       String?
+  avatarUrl     String?
+  emailVerified Boolean  @default(false)
+  platformAdmin Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  memberships OrganizationMember[]
+  auditLogs   AuditLog[]
+  apiKeys     ApiKey[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Organization {
+  id                   String   @id @default(cuid())
+  name                 String
+  slug                 String   @unique
+  industry             String
+  website              String?
+  country              String
+  timezone             String   @default("Asia/Kolkata")
+  plan                 String   @default("starter")
+  logoUrl              String?
+  // White-label / agency
+  brandingJson         Json?
+  customDomain         String?  @unique
+  parentOrganizationId String?
+  parent               Organization?  @relation("AgencySubAccounts", fields: [parentOrganizationId], references: [id])
+  subAccounts          Organization[] @relation("AgencySubAccounts")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  members        OrganizationMember[]
+  workspaces     Workspace[]
+  agents         Agent[]
+  phoneNumbers   PhoneNumber[]
+  calls          Call[]
+  contacts       Contact[]
+  leads          Lead[]
+  appointments   Appointment[]
+  campaigns      Campaign[]
+  knowledgeBases KnowledgeBase[]
+  integrations   Integration[]
+  workflows      Workflow[]
+  subscription   Subscription?
+  usageRecords   UsageRecord[]
+  apiKeys        ApiKey[]
+  webhooks       Webhook[]
+  auditLogs      AuditLog[]
+  notifications  Notification[]
+  followUpSequences FollowUpSequence[]
+
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String
+  role           String   // owner | admin | manager | agent_manager | sales_rep | viewer
+  status         String   @default("invited") // active | invited | suspended
+  permissions    Json     @default("{}")     // { agents: all|assigned|none, analytics: bool, billing: bool }
+  invitedBy      String?
+  lastActiveAt   DateTime?
+  joinedAt       DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+  @@map("organization_members")
+}
+
+model Workspace {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  slug           String
+  timezone       String   @default("Asia/Kolkata")
+  isDefault      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  agents       Agent[]
+  calls        Call[]
+  leads        Lead[]
+
+  @@unique([organizationId, slug])
+  @@map("workspaces")
+}
+
+/* ───────────── Agents ───────────── */
+
+model Agent {
+  id             String   @id @default(cuid())
+  organizationId String
+  workspaceId    String
+  name           String
+  role           String
+  company        String
+  description    String?
+  goal           String?
+  type           String
+  status         String   @default("draft") // active | paused | draft
+  channels       String[] @default(["voice"])
+  systemPrompt   String
+  voiceConfig    Json
+  behaviorConfig Json
+  qualification  Json
+  flow           Json?
+  phoneNumberId  String?  @unique
+  currentVersion Int      @default(1)
+  lastActiveAt   DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  workspace    Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  phoneNumber  PhoneNumber? @relation(fields: [phoneNumberId], references: [id])
+  versions     AgentVersion[]
+  calls        Call[]
+  campaigns    Campaign[]
+  knowledgeLinks AgentKnowledge[]
+
+  @@index([organizationId, status])
+  @@map("agents")
+}
+
+model AgentVersion {
+  id        String   @id @default(cuid())
+  agentId   String
+  version   Int
+  snapshot  Json     // full agent config at that version
+  createdBy String?
+  note      String?
+  createdAt DateTime @default(now())
+
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@unique([agentId, version])
+  @@map("agent_versions")
+}
+
+model PhoneNumber {
+  id               String   @id @default(cuid())
+  organizationId   String
+  number           String   @unique
+  friendlyName     String?
+  country          String
+  countryCode      String
+  provider         String   // leadpulz | twilio | byoc
+  providerNumberId String?
+  capabilities     String[] @default(["voice"])
+  status           String   @default("pending")
+  monthlyCost      Decimal  @default(0) @db.Decimal(10, 2)
+  createdAt        DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  agent        Agent?
+  calls        Call[]
+
+  @@index([organizationId])
+  @@map("phone_numbers")
+}
+
+/* ───────────── Calls ───────────── */
+
+model Call {
+  id                String    @id @default(cuid())
+  organizationId    String
+  workspaceId       String
+  agentId           String
+  phoneNumberId     String?
+  contactId         String?
+  leadId            String?
+  campaignId        String?
+  provider          String
+  providerCallId    String?   @unique
+  direction         String    // inbound | outbound
+  status            String    // in_progress | completed | missed | failed | voicemail | transferred
+  outcome           String?
+  objective         String?
+  customerName      String?
+  customerPhone     String
+  durationSec       Int       @default(0)
+  costMinutes       Decimal   @default(0) @db.Decimal(10, 2)
+  leadScore         Int?
+  sentiment         String?
+  intent            String?
+  summaryJson       Json?     // CallSummary
+  insightsJson      Json?     // CallInsights
+  startedAt         DateTime  @default(now())
+  endedAt           DateTime?
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  workspace    Workspace     @relation(fields: [workspaceId], references: [id])
+  agent        Agent         @relation(fields: [agentId], references: [id])
+  phoneNumber  PhoneNumber?  @relation(fields: [phoneNumberId], references: [id])
+  contact      Contact?      @relation(fields: [contactId], references: [id])
+  lead         Lead?         @relation(fields: [leadId], references: [id])
+  campaign     Campaign?     @relation(fields: [campaignId], references: [id])
+  recording    CallRecording?
+  transcript   CallTranscript[]
+  events       CallEvent[]
+
+  @@index([organizationId, startedAt])
+  @@index([leadId])
+  @@map("calls")
+}
+
+model CallRecording {
+  id          String   @id @default(cuid())
+  callId      String   @unique
+  storagePath String   // private bucket path; served via signed URLs
+  durationSec Int
+  sizeBytes   Int?
+  createdAt   DateTime @default(now())
+
+  call Call @relation(fields: [callId], references: [id], onDelete: Cascade)
+
+  @@map("call_recordings")
+}
+
+model CallTranscript {
+  id         String  @id @default(cuid())
+  callId     String
+  seq        Int
+  speaker    String  // ai | customer
+  text       String
+  offsetSec  Decimal @db.Decimal(8, 2)
+  highlights Json?
+
+  call Call @relation(fields: [callId], references: [id], onDelete: Cascade)
+
+  @@unique([callId, seq])
+  @@map("call_transcripts")
+}
+
+model CallEvent {
+  id          String   @id @default(cuid())
+  callId      String
+  type        String
+  description String?
+  payload     Json?
+  at          DateTime @default(now())
+
+  call Call @relation(fields: [callId], references: [id], onDelete: Cascade)
+
+  @@index([callId, at])
+  @@map("call_events")
+}
+
+/* ───────────── CRM ───────────── */
+
+model Contact {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  phone          String
+  email          String?
+  company        String?
+  tags           String[] @default([])
+  externalIds    Json?    // { hubspot: "...", salesforce: "..." }
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  leads        Lead[]
+  calls        Call[]
+  campaignContacts CampaignContact[]
+
+  @@unique([organizationId, phone])
+  @@map("contacts")
+}
+
+model Lead {
+  id                  String    @id @default(cuid())
+  organizationId      String
+  workspaceId         String
+  contactId           String
+  source              String
+  stage               String    @default("new")
+  quality             String    @default("not_qualified")
+  score               Int       @default(0)
+  agentId             String?
+  ownerId             String?
+  estimatedValue      Decimal   @default(0) @db.Decimal(14, 2)
+  currency            String    @default("INR")
+  serviceInterest     String?
+  location            String?
+  tags                String[]  @default([])
+  lastConversationAt  DateTime?
+  lastConversationSummary String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  workspace    Workspace    @relation(fields: [workspaceId], references: [id])
+  contact      Contact      @relation(fields: [contactId], references: [id])
+  scores       LeadScore[]
+  calls        Call[]
+  appointments Appointment[]
+  timeline     TimelineEvent[]
+  notes        Note[]
+
+  @@index([organizationId, stage])
+  @@index([organizationId, score])
+  @@map("leads")
+}
+
+model LeadScore {
+  id        String   @id @default(cuid())
+  leadId    String
+  score     Int
+  quality   String
+  breakdown Json     // { question_id: points }
+  reason    String?
+  scoredBy  String   // agent id or user id
+  createdAt DateTime @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId, createdAt])
+  @@map("lead_scores")
+}
+
+model TimelineEvent {
+  id          String   @id @default(cuid())
+  leadId      String
+  channel     String
+  type        String
+  title       String
+  description String?
+  actor       String
+  refId       String?
+  at          DateTime @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId, at])
+  @@map("timeline_events")
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  leadId    String
+  authorId  String
+  body      String
+  createdAt DateTime @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("notes")
+}
+
+model Appointment {
+  id               String   @id @default(cuid())
+  organizationId   String
+  leadId           String?
+  customerName     String
+  customerPhone    String
+  service          String
+  staff            String?
+  startsAt         DateTime
+  endsAt           DateTime
+  agentId          String?
+  status           String   @default("confirmed")
+  calendarProvider String?
+  externalEventId  String?
+  notes            String?
+  estimatedValue   Decimal? @db.Decimal(14, 2)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lead         Lead?        @relation(fields: [leadId], references: [id])
+
+  @@index([organizationId, startsAt])
+  @@map("appointments")
+}
+
+/* ───────────── Campaigns & automation ───────────── */
+
+model Campaign {
+  id              String    @id @default(cuid())
+  organizationId  String
+  agentId         String
+  name            String
+  type            String
+  status          String    @default("draft")
+  objective       String?
+  script          String?
+  callingHours    Json      // { start, end }
+  timezone        String
+  maxAttempts     Int       @default(2)
+  retryDelayMin   Int       @default(240)
+  startDate       DateTime
+  endDate         DateTime?
+  statsJson       Json      @default("{}")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  agent        Agent        @relation(fields: [agentId], references: [id])
+  contacts     CampaignContact[]
+  calls        Call[]
+
+  @@index([organizationId, status])
+  @@map("campaigns")
+}
+
+model CampaignContact {
+  id           String    @id @default(cuid())
+  campaignId   String
+  contactId    String
+  status       String    @default("pending") // pending | calling | answered | no_answer | voicemail | do_not_call | completed
+  attempts     Int       @default(0)
+  lastAttemptAt DateTime?
+  nextAttemptAt DateTime?
+  outcome      String?
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contact  Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, contactId])
+  @@index([campaignId, status, nextAttemptAt])
+  @@map("campaign_contacts")
+}
+
+model FollowUpSequence {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  trigger        String
+  steps          Json
+  status         String   @default("draft")
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("follow_up_sequences")
+}
+
+model Workflow {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  description    String?
+  trigger        String
+  triggerFilter  String?
+  steps          Json
+  status         String   @default("draft")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  runs         WorkflowRun[]
+
+  @@index([organizationId, trigger, status])
+  @@map("workflows")
+}
+
+model WorkflowRun {
+  id         String    @id @default(cuid())
+  workflowId String
+  status     String    // running | success | failed
+  triggerRef String?
+  input      Json?
+  output     Json?
+  error      String?
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+
+  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@index([workflowId, startedAt])
+  @@map("workflow_runs")
+}
+
+/* ───────────── Knowledge ───────────── */
+
+model KnowledgeBase {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  description    String?
+  createdAt      DateTime @default(now())
+
+  organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  documents    KnowledgeDocument[]
+
+  @@map("knowledge_bases")
+}
+
+model KnowledgeDocument {
+  id              String   @id @default(cuid())
+  organizationId  String
+  knowledgeBaseId String
+  title           String
+  sourceType      String
+  sourceRef       String
+  status          String   @default("processing") // processing | ready | error
+  errorMessage    String?
+  chunks          Int      @default(0)
+  sizeKb          Int?
+  lastUpdatedAt   DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  knowledgeBase KnowledgeBase   @relation(fields: [knowledgeBaseId], references: [id], onDelete: Cascade)
+  agentLinks    AgentKnowledge[]
+
+  @@index([organizationId, status])
+  @@map("knowledge_documents")
+}
+
+// Embeddings live in a pgvector table (knowledge_chunks) managed via SQL migration.
+
+model AgentKnowledge {
+  agentId    String
+  documentId String
+
+  agent    Agent             @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  document KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@id([agentId, documentId])
+  @@map("agent_knowledge")
+}
+
+/* ───────────── Integrations, billing, platform ───────────── */
+
+model Integration {
+  id               String    @id @default(cuid())
+  organizationId   String
+  key              String    // hubspot, google_calendar, ...
+  category         String
+  status           String    @default("available")
+  // Encrypted at rest (AES-256-GCM via KMS); never returned to clients.
+  credentialsEnc   Bytes?
+  config           Json?
+  connectedAt      DateTime?
+  lastSyncAt       DateTime?
+  errorMessage     String?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, key])
+  @@map("integrations")
+}
+
+model Subscription {
+  id                 String   @id @default(cuid())
+  organizationId     String   @unique
+  plan               String
+  status             String
+  seats              Int      @default(1)
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  providerCustomerId String?  // Stripe / Razorpay
+  providerSubId      String?
+  paymentMethodJson  Json?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+model UsageRecord {
+  id             String   @id @default(cuid())
+  organizationId String
+  metric         String   // voice_minutes | calls | sms | whatsapp | premium_integration
+  quantity       Decimal  @db.Decimal(14, 3)
+  unitCost       Decimal? @db.Decimal(10, 4)
+  refId          String?  // call id etc.
+  periodStart    DateTime
+  recordedAt     DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, metric, periodStart])
+  @@map("usage_records")
+}
+
+model ApiKey {
+  id             String    @id @default(cuid())
+  organizationId String
+  createdById    String
+  name           String
+  prefix         String
+  keyHash        String    @unique // SHA-256 of the full key; plaintext shown once
+  last4          String
+  scopes         String[]
+  status         String    @default("active")
+  lastUsedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  revokedAt      DateTime?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdBy    User         @relation(fields: [createdById], references: [id])
+
+  @@index([organizationId])
+  @@map("api_keys")
+}
+
+model Webhook {
+  id             String   @id @default(cuid())
+  organizationId String
+  url            String
+  events         String[]
+  secretEnc      Bytes    // HMAC signing secret, encrypted
+  status         String   @default("active")
+  createdAt      DateTime @default(now())
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  deliveries   WebhookDelivery[]
+
+  @@map("webhooks")
+}
+
+model WebhookDelivery {
+  id         String   @id @default(cuid())
+  webhookId  String
+  event      String
+  payload    Json
+  statusCode Int?
+  durationMs Int?
+  success    Boolean  @default(false)
+  attempt    Int      @default(1)
+  at         DateTime @default(now())
+
+  webhook Webhook @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  @@index([webhookId, at])
+  @@map("webhook_deliveries")
+}
+
+model Notification {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String
+  type           String
+  title          String
+  body           String
+  href           String?
+  read           Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read, createdAt])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  organizationId String?
+  actorId        String?
+  actorLabel     String
+  action         String
+  target         String
+  metadata       Json?
+  ip             String?
+  userAgent      String?
+  at             DateTime @default(now())
+
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  actor        User?         @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, at])
+  @@map("audit_logs")
+}

@@ -1,0 +1,2 @@
+import { AdminSubscriptions } from "@/components/admin/admin-pages";
+export default function Page() { return <AdminSubscriptions />; }
