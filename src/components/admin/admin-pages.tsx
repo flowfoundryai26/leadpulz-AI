@@ -68,7 +68,7 @@ export function AdminOrganizations() {
   return (
     <div>
       <PageHeader title="Organizations" description={`${adminOrgs.length} tenants · ${formatCurrency(adminOrgs.reduce((a, b) => a + b.mrr, 0))} MRR`}>
-        <div className="flex flex-wrap gap-2"><Input placeholder="Search organizations…" value={q} onChange={(e) => setQ(e.target.value)} leftIcon={<Search />} className="w-full sm:w-64" /><SimpleSelect value={plan} onValueChange={setPlan} className="w-40" options={[{ value: "all", label: "All plans" }, { value: "starter", label: "Starter" }, { value: "growth", label: "Growth" }, { value: "professional", label: "Professional" }, { value: "enterprise", label: "Enterprise" }]} /></div>
+        <div className="flex flex-wrap gap-2"><Input placeholder="Search organizations…" value={q} onChange={(e) => setQ(e.target.value)} leftIcon={<Search />} className="w-full sm:w-64" /><SimpleSelect value={plan} onValueChange={setPlan} className="w-full sm:w-40" options={[{ value: "all", label: "All plans" }, { value: "starter", label: "Starter" }, { value: "growth", label: "Growth" }, { value: "professional", label: "Professional" }, { value: "enterprise", label: "Enterprise" }]} /></div>
       </PageHeader>
       <DataTable columns={cols} rows={rows} rowKey={(o) => o.id} />
     </div>

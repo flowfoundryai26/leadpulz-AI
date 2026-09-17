@@ -139,8 +139,8 @@ export function CallsTable({ leadId, compact }: { leadId?: string; compact?: boo
             ))}
           </div>
           <Input placeholder="Search customer, phone or intent…" value={q} onChange={(e) => setQ(e.target.value)} leftIcon={<Search />} className="w-full sm:w-72" />
-          <SimpleSelect value={agentId} onValueChange={setAgentId} className="w-56" options={[{ value: "all", label: "All agents" }, ...(agents ?? []).map((a) => ({ value: a.id, label: a.name }))]} />
-          <Button asChild variant="secondary" size="sm" className="ml-auto">
+          <SimpleSelect value={agentId} onValueChange={setAgentId} className="w-full sm:w-56" options={[{ value: "all", label: "All agents" }, ...(agents ?? []).map((a) => ({ value: a.id, label: a.name }))]} />
+          <Button asChild variant="secondary" size="sm" className="sm:ml-auto">
             <Link href="/calls/live">
               <Radio className="text-accent" /> Live calls <Badge variant="accent" className="ml-1">3</Badge>
             </Link>

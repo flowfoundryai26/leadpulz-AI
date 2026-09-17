@@ -157,7 +157,7 @@ export function FlowBuilder({ agentId }: { agentId: string }) {
 
   if (loading) {
     return (
-      <div className="flex h-[640px] items-center justify-center rounded-2xl border border-border bg-surface">
+      <div className="flex h-[60dvh] min-h-[420px] items-center justify-center rounded-2xl border border-border bg-surface lg:h-[640px]">
         <Spinner size={24} />
       </div>
     );
@@ -180,7 +180,7 @@ export function FlowBuilder({ agentId }: { agentId: string }) {
         </div>
       </aside>
 
-      <div className="relative h-[640px] overflow-hidden rounded-2xl border border-border bg-background-subtle">
+      <div className="relative h-[60dvh] min-h-[420px] overflow-hidden rounded-2xl border border-border bg-background-subtle lg:h-[640px]">
         <ReactFlow
           nodes={nodes}
           edges={edges}

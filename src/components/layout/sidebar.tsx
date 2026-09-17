@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Check, ChevronsUpDown, HelpCircle, LogOut, PanelLeftClose, PanelLeftOpen, Plus, Settings, ShieldCheck, UserCircle2 } from "lucide-react";
+import { Check, ChevronsUpDown, HelpCircle, LogOut, PanelLeftClose, PanelLeftOpen, Plus, Settings, ShieldCheck, UserCircle2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/app-store";
 import { Logo, LogoMark } from "./logo";
@@ -183,18 +184,61 @@ export function Sidebar() {
 export function MobileNav() {
   const pathname = usePathname();
   const { mobileNavOpen, setMobileNavOpen } = useAppStore();
+  const { data: user } = useQuery(() => services.auth.getCurrentUser(), []);
+
+  // Close the drawer on navigation and on Escape; lock body scroll while open.
+  useEffect(() => {
+    setMobileNavOpen(false);
+  }, [pathname, setMobileNavOpen]);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMobileNavOpen(false);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [mobileNavOpen, setMobileNavOpen]);
+
   if (!mobileNavOpen) return null;
   return (
-    <div className="fixed inset-0 z-50 lg:hidden">
-      <div className="absolute inset-0 bg-black/60" onClick={() => setMobileNavOpen(false)} />
-      <div className="absolute inset-y-0 left-0 w-[280px] border-r border-border bg-background-subtle p-4 animate-slide-up flex flex-col">
-        <Logo className="mb-4" />
-        <OrgSwitcher collapsed={false} />
-        <nav className="mt-3 flex-1 space-y-0.5 overflow-y-auto" onClick={() => setMobileNavOpen(false)}>
+    <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] animate-fade-in" onClick={() => setMobileNavOpen(false)} />
+      <div className="absolute inset-y-0 left-0 flex w-[280px] max-w-[85vw] flex-col border-r border-border bg-background-subtle animate-[slide-in-left_0.25s_cubic-bezier(0.16,1,0.3,1)] lp-safe-bottom">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4">
+          <Link href="/dashboard" aria-label="LeadPulz AI home" onClick={() => setMobileNavOpen(false)}>
+            <Logo />
+          </Link>
+          <button type="button" onClick={() => setMobileNavOpen(false)} className="flex size-9 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-foreground" aria-label="Close navigation">
+            <X className="size-5" />
+          </button>
+        </div>
+        <div className="px-3 pt-3">
+          <OrgSwitcher collapsed={false} />
+        </div>
+        <nav className="mt-3 flex-1 space-y-0.5 overflow-y-auto px-3 pb-3" aria-label="Main navigation" onClick={() => setMobileNavOpen(false)}>
           {mainNav.map((item) => (
             <NavLink key={item.href} item={item} collapsed={false} pathname={pathname} />
           ))}
         </nav>
+        <div className="shrink-0 space-y-1 border-t border-border p-3">
+          <Link href="/help" onClick={() => setMobileNavOpen(false)} className="flex items-center gap-3 rounded-lg px-2.5 py-2 text-[13px] text-foreground-secondary hover:bg-surface-2 hover:text-foreground">
+            <HelpCircle className="size-[18px] text-muted" /> Help
+          </Link>
+          <Link href="/settings?section=profile" onClick={() => setMobileNavOpen(false)} className="flex items-center gap-3 rounded-lg px-2 py-1.5 hover:bg-surface-2">
+            <Avatar name={user?.fullName ?? "User"} size="sm" />
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[13px] font-medium text-foreground">{user?.fullName ?? "…"}</span>
+              <span className="block truncate text-[11px] text-muted">{user?.email ?? ""}</span>
+            </span>
+          </Link>
+          <Link href="/login" className="flex items-center gap-3 rounded-lg px-2.5 py-2 text-[13px] text-muted hover:bg-surface-2 hover:text-foreground">
+            <LogOut className="size-[18px]" /> Sign out
+          </Link>
+        </div>
       </div>
     </div>
   );

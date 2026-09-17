@@ -83,8 +83,8 @@ export function AgentBuilder({ agentId }: { agentId: string }) {
       <PageHeader
         breadcrumbs={[{ label: "AI Agents", href: "/agents" }, { label: first }]}
         title={
-          <span className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/80 to-accent/70 text-white">
+          <span className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl sm:size-10 bg-gradient-to-br from-primary/80 to-accent/70 text-white">
               <Bot className="size-5" />
             </span>
             {draft.name}
@@ -93,8 +93,8 @@ export function AgentBuilder({ agentId }: { agentId: string }) {
           </span>
         }
         description={
-          <span className="flex items-center gap-2">
-            {draft.role} · {draft.company}
+          <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span>{draft.role} · {draft.company}</span>
             {draft.phoneNumber ? (
               <span className="inline-flex items-center gap-1 font-mono text-xs">
                 <Phone className="size-3" /> {draft.phoneNumber}
@@ -115,7 +115,7 @@ export function AgentBuilder({ agentId }: { agentId: string }) {
         }
       />
       <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
-        <TabsList variant="underline" className="mb-2 overflow-x-auto">
+        <TabsList variant="underline" className="mb-2">
           <TabsTrigger value="agent">Agent</TabsTrigger>
           <TabsTrigger value="prompt">System Prompt</TabsTrigger>
           <TabsTrigger value="flow">Conversation Flow</TabsTrigger>

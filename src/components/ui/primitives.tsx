@@ -158,13 +158,14 @@ Separator.displayName = "Separator";
 const Popover = PopoverPrimitive.Root;
 const PopoverTrigger = PopoverPrimitive.Trigger;
 const PopoverContent = React.forwardRef<React.ElementRef<typeof PopoverPrimitive.Content>, React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>>(
-  ({ className, align = "center", sideOffset = 6, ...props }, ref) => (
+  ({ className, align = "center", sideOffset = 6, collisionPadding = 8, ...props }, ref) => (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content
         ref={ref}
         align={align}
         sideOffset={sideOffset}
-        className={cn("z-[60] w-72 rounded-xl border border-border bg-elevated p-4 text-foreground shadow-card outline-none animate-fade-in", className)}
+        collisionPadding={collisionPadding}
+        className={cn("z-[60] w-72 max-w-[calc(100vw-1rem)] rounded-xl border border-border bg-elevated p-4 text-foreground shadow-card outline-none animate-fade-in", className)}
         {...props}
       />
     </PopoverPrimitive.Portal>

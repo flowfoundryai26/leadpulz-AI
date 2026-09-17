@@ -28,7 +28,7 @@ export function CalendarToolbar({ view, setView, cursor, setCursor }: { view: Ca
         <Button variant="secondary" size="sm" onClick={() => setCursor(new Date())}>Today</Button>
         <Button variant="secondary" size="icon-sm" onClick={() => step(1)} aria-label="Next"><ChevronRight /></Button>
       </div>
-      <p className="text-sm font-semibold">{label}</p>
+      <p className="min-w-0 flex-1 truncate text-sm font-semibold sm:flex-none">{label}</p>
       <div className="ml-auto inline-flex rounded-lg border border-border bg-background-subtle p-1">
         {(["day", "week", "month", "list"] as CalView[]).map((v) => (
           <button key={v} type="button" onClick={() => setView(v)} className={cn("rounded-md px-2.5 py-1 text-xs font-medium capitalize", view === v ? "bg-surface-2 text-foreground" : "text-muted hover:text-foreground")}>{v}</button>
@@ -53,15 +53,22 @@ export function MonthView({ cursor, appointments, onSelect }: { cursor: Date; ap
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-surface">
       <div className="grid grid-cols-7 border-b border-border text-center text-[11px] font-semibold uppercase tracking-wider text-muted">
-        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => <div key={d} className="py-2">{d}</div>)}
+        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => <div key={d} className="py-2"><span className="sm:hidden">{d[0]}</span><span className="hidden sm:inline">{d}</span></div>)}
       </div>
       <div className="grid grid-cols-7">
         {days.map((d) => {
           const items = appointments.filter((a) => isSameDay(new Date(a.startsAt), d));
           return (
-            <div key={d.toISOString()} className={cn("min-h-[104px] border-b border-r border-border p-1.5", !isSameMonth(d, cursor) && "bg-background-subtle/60")}>
+            <div key={d.toISOString()} className={cn("min-h-[56px] border-b border-r border-border p-1 sm:min-h-[104px] sm:p-1.5", !isSameMonth(d, cursor) && "bg-background-subtle/60")}>
               <p className={cn("mb-1 flex size-6 items-center justify-center rounded-full text-xs", isToday(d) ? "bg-primary font-semibold text-white" : !isSameMonth(d, cursor) ? "text-faint" : "text-foreground-secondary")}>{format(d, "d")}</p>
-              <div className="space-y-1">
+              {/* Phones: tappable dots; larger screens: labelled chips */}
+              {items.length > 0 ? (
+                <button type="button" onClick={() => onSelect(items[0])} className="flex flex-wrap gap-0.5 px-0.5 sm:hidden" aria-label={`${items.length} appointment${items.length === 1 ? "" : "s"}`}>
+                  {items.slice(0, 4).map((a) => <span key={a.id} className={cn("size-1.5 rounded-full", a.status === "cancelled" ? "bg-faint" : a.status === "pending" ? "bg-warning" : a.status === "no_show" ? "bg-danger" : "bg-success")} />)}
+                  {items.length > 4 ? <span className="text-[9px] leading-none text-muted">+{items.length - 4}</span> : null}
+                </button>
+              ) : null}
+              <div className="hidden space-y-1 sm:block">
                 {items.slice(0, 3).map((a) => <Chip key={a.id} a={a} onClick={() => onSelect(a)} compact />)}
                 {items.length > 3 ? <p className="px-1 text-[10px] text-muted">+{items.length - 3} more</p> : null}
               </div>
@@ -79,7 +86,7 @@ export function WeekView({ cursor, appointments, onSelect, single }: { cursor: D
   const days = single ? [cursor] : eachDayOfInterval({ start: startOfWeek(cursor, { weekStartsOn: 1 }), end: endOfWeek(cursor, { weekStartsOn: 1 }) });
   return (
     <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
-      <div className="min-w-[760px]">
+      <div className={cn(!single && "min-w-[760px]")}>
         <div className="grid border-b border-border" style={{ gridTemplateColumns: `56px repeat(${days.length}, 1fr)` }}>
           <div />
           {days.map((d) => (

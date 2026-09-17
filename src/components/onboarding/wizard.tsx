@@ -608,7 +608,7 @@ export function OnboardingWizard() {
             <p className="mx-auto mt-4 max-w-lg text-[15px] text-foreground-secondary">
               {agentName} is live for {business.name}. Calls to {phoneChoice === "skip" ? "your browser test line" : "+91 40 6969 1203"} will now be answered instantly, qualified and booked into your calendar.
             </p>
-            <div className="mx-auto mt-8 grid max-w-xl grid-cols-3 gap-3 text-left">
+            <div className="mx-auto mt-8 grid max-w-xl gap-3 text-left sm:grid-cols-3">
               {[
                 ["Template", template?.name ?? "—"],
                 ["Voice", `${agentName} · ${voice.accent}`],

@@ -77,9 +77,9 @@ function LeadsContent() {
       >
         <div className="flex flex-wrap items-center gap-2">
           <Input placeholder="Search leads…" value={q} onChange={(e) => setQ(e.target.value)} leftIcon={<Search />} className="w-full sm:w-64" />
-          <SimpleSelect value={stage} onValueChange={setStage} className="w-48" options={[{ value: "all", label: "All stages" }, ...LEAD_STAGES.map((s) => ({ value: s.value, label: s.label }))]} />
-          <SimpleSelect value={quality} onValueChange={setQuality} className="w-40" options={[{ value: "all", label: "All qualities" }, { value: "hot", label: "Hot" }, { value: "warm", label: "Warm" }, { value: "cold", label: "Cold" }, { value: "not_qualified", label: "Not qualified" }]} />
-          <div className="ml-auto inline-flex rounded-lg border border-border bg-background-subtle p-1">
+          <SimpleSelect value={stage} onValueChange={setStage} className="w-full sm:w-48" options={[{ value: "all", label: "All stages" }, ...LEAD_STAGES.map((s) => ({ value: s.value, label: s.label }))]} />
+          <SimpleSelect value={quality} onValueChange={setQuality} className="w-full sm:w-40" options={[{ value: "all", label: "All qualities" }, { value: "hot", label: "Hot" }, { value: "warm", label: "Warm" }, { value: "cold", label: "Cold" }, { value: "not_qualified", label: "Not qualified" }]} />
+          <div className="inline-flex rounded-lg border border-border bg-background-subtle p-1 sm:ml-auto">
             <button type="button" onClick={() => setView("kanban")} className={cn("flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs", view === "kanban" ? "bg-surface-2 text-foreground" : "text-muted hover:text-foreground")}><Kanban className="size-3.5" /> Kanban</button>
             <button type="button" onClick={() => setView("table")} className={cn("flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs", view === "table" ? "bg-surface-2 text-foreground" : "text-muted hover:text-foreground")}><List className="size-3.5" /> Table</button>
           </div>
@@ -87,7 +87,7 @@ function LeadsContent() {
       </PageHeader>
 
       {error ? <ErrorState error={error} onRetry={refetch} /> : loading ? (
-        <div className="flex gap-3 overflow-hidden">{[0, 1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-[420px] w-[272px] shrink-0 rounded-2xl" />)}</div>
+        <div className="flex gap-3 overflow-hidden">{[0, 1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-[420px] w-[min(272px,80vw)] shrink-0 rounded-2xl sm:w-[272px]" />)}</div>
       ) : data?.items.length === 0 ? (
         <EmptyState icon={<UserSquare2 />} title="No leads yet" description="Leads are created automatically from every qualified conversation, or you can add them manually." action={<Button onClick={() => setOpen(true)}><Plus /> Add Lead</Button>} />
       ) : view === "kanban" ? (

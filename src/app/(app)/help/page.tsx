@@ -51,7 +51,7 @@ export default function HelpPage() {
       <Card id="support" className="mt-6 p-6">
         <h2 className="text-lg font-semibold">Need a hand?</h2>
         <p className="mt-1 text-sm text-muted">Email <a href="mailto:support@leadpulz.ai" className="text-[#a3a3ff] hover:underline">support@leadpulz.ai</a> or chat with us from the app. Built by FlowFoundry AI Solutions.</p>
-        <div className="mt-4 flex gap-2"><Button variant="secondary" onClick={() => toast.success("Support chat opened")}><MessageCircle /> Chat with support</Button><Button variant="ghost" asChild><a href="#terms">Terms</a></Button><Button variant="ghost" asChild><a href="#privacy">Privacy</a></Button></div>
+        <div className="mt-4 flex flex-wrap gap-2"><Button variant="secondary" onClick={() => toast.success("Support chat opened")}><MessageCircle /> Chat with support</Button><Button variant="ghost" asChild><a href="#terms">Terms</a></Button><Button variant="ghost" asChild><a href="#privacy">Privacy</a></Button></div>
       </Card>
     </div>
   );

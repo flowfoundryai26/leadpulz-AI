@@ -193,3 +193,52 @@ body {
   background: var(--lp-surface-2);
   border: 2px solid var(--lp-primary);
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Responsive helpers
+   ───────────────────────────────────────────────────────────── */
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Never allow the page itself to scroll sideways — wide content scrolls
+   inside its own container instead. */
+body {
+  overflow-x: clip;
+}
+
+/* Horizontal scroll strip (tab bars, chip rows, kanban) without a visible bar */
+.lp-scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.lp-scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Respect notched devices on full-bleed surfaces */
+.lp-safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 0px);
+}
+
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* Recharts wrappers must be allowed to shrink inside grid/flex cells */
+.recharts-responsive-container {
+  min-width: 0;
+}
+
+/* Larger tap targets on coarse pointers */
+@media (pointer: coarse) {
+  button, [role="button"], a[href] {
+    touch-action: manipulation;
+  }
+}

@@ -87,8 +87,8 @@ export function LiveCallDetail({ callId }: { callId: string }) {
         }
       />
       <div className="grid gap-6 xl:grid-cols-[1fr_340px]">
-        <Card className="flex max-h-[70vh] min-h-[520px] flex-col">
-          <CardHeader className="flex-row items-center justify-between border-b border-border">
+        <Card className="flex max-h-[70dvh] min-h-[420px] flex-col sm:min-h-[520px]">
+          <CardHeader className="flex-row flex-wrap items-center justify-between gap-2 border-b border-border">
             <CardTitle className="flex items-center gap-2"><Bot className="size-4 text-[#a3a3ff]" /> {call.agentName}</CardTitle>
             <Waveform />
           </CardHeader>

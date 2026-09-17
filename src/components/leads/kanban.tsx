@@ -60,7 +60,7 @@ export function LeadKanban({ leads, onMove }: { leads: Lead[]; onMove: (id: stri
   };
 
   return (
-    <div className="flex gap-3 overflow-x-auto pb-4">
+    <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 sm:mx-0 sm:snap-none sm:px-0">
       {LEAD_STAGES.map((stage) => {
         const items = leads.filter((l) => l.stage === stage.value);
         const value = items.reduce((a, b) => a + b.estimatedValue, 0);
@@ -70,7 +70,7 @@ export function LeadKanban({ leads, onMove }: { leads: Lead[]; onMove: (id: stri
             onDragOver={(e) => { e.preventDefault(); setOver(stage.value); }}
             onDragLeave={() => setOver(null)}
             onDrop={() => drop(stage.value)}
-            className={cn("flex w-[272px] shrink-0 flex-col rounded-2xl border border-border bg-background-subtle transition-colors", over === stage.value && "border-primary/60 bg-primary-soft/20")}
+            className={cn("flex w-[min(272px,80vw)] shrink-0 snap-start flex-col rounded-2xl border border-border bg-background-subtle transition-colors sm:w-[272px]", over === stage.value && "border-primary/60 bg-primary-soft/20")}
           >
             <div className="flex items-center gap-2 px-3 py-2.5">
               <span className="size-2 rounded-full" style={{ background: stage.color }} />

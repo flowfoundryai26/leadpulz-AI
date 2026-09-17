@@ -90,7 +90,7 @@ export function QuickCreate() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="sm" className="gap-1.5">
+        <Button size="sm" className="shrink-0 gap-1.5">
           <Plus /> <span className="hidden sm:inline">Create</span>
         </Button>
       </DropdownMenuTrigger>
@@ -139,7 +139,7 @@ export function NotificationCenter() {
           ) : null}
         </button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-[380px] p-0">
+      <PopoverContent align="end" collisionPadding={8} className="w-[calc(100vw-1rem)] max-w-[380px] p-0">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <p className="text-sm font-semibold">Notifications</p>
           <Button
@@ -153,7 +153,7 @@ export function NotificationCenter() {
             Mark all read
           </Button>
         </div>
-        <ScrollArea className="max-h-[420px]">
+        <ScrollArea className="max-h-[min(420px,60vh)]">
           <ul className="divide-y divide-border">
             {data?.map((n) => (
               <li key={n.id}>
@@ -187,8 +187,8 @@ export function Topbar({ title }: { title?: string }) {
   useEffect(() => setIsMac(navigator.platform.toUpperCase().includes("MAC")), []);
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-md lg:px-6">
-      <button type="button" className="lg:hidden flex size-9 items-center justify-center rounded-lg hover:bg-surface-2" onClick={() => setMobileNavOpen(true)} aria-label="Open navigation">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-1.5 border-b border-border bg-background/80 px-3 backdrop-blur-md sm:h-16 sm:gap-3 sm:px-4 lg:px-6">
+      <button type="button" className="lg:hidden flex size-9 shrink-0 items-center justify-center rounded-lg hover:bg-surface-2" onClick={() => setMobileNavOpen(true)} aria-label="Open navigation">
         <Menu className="size-5" />
       </button>
       <WorkspaceSelector />
@@ -197,14 +197,22 @@ export function Topbar({ title }: { title?: string }) {
       <button
         type="button"
         onClick={() => setCommandOpen(true)}
-        className="ml-auto flex h-9 w-full max-w-[420px] items-center gap-2 rounded-lg border border-border bg-background-subtle px-3 text-left text-sm text-muted transition-colors hover:border-border-strong hover:text-foreground-secondary"
+        className="ml-auto hidden h-9 w-full max-w-[420px] items-center gap-2 rounded-lg border border-border bg-background-subtle px-3 text-left text-sm text-muted transition-colors hover:border-border-strong hover:text-foreground-secondary sm:flex"
       >
         <Search className="size-4" />
         <span className="flex-1 truncate">Search leads, calls, agents…</span>
-        <span className="hidden sm:flex items-center gap-1">
+        <span className="hidden md:flex items-center gap-1">
           <Kbd>{isMac ? "⌘" : "Ctrl"}</Kbd>
           <Kbd>K</Kbd>
         </span>
+      </button>
+      <button
+        type="button"
+        onClick={() => setCommandOpen(true)}
+        className="ml-auto flex size-9 items-center justify-center rounded-lg text-foreground-secondary hover:bg-surface-2 hover:text-foreground sm:hidden"
+        aria-label="Search"
+      >
+        <Search className="size-[18px]" />
       </button>
 
       <QuickCreate />

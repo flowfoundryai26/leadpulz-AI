@@ -142,7 +142,7 @@ export default function KnowledgePage() {
       <PageHeader title="Knowledge" description="Teach your AI agents about your company — services, pricing, policies and FAQs." actions={<Button onClick={() => setOpen(true)}><Plus /> Add Knowledge</Button>}>
         <div className="flex flex-wrap items-center gap-2">
           <Input placeholder="Search documents…" value={q} onChange={(e) => setQ(e.target.value)} leftIcon={<Search />} className="w-full sm:w-64" />
-          <SimpleSelect value={base} onValueChange={setBase} className="w-52" options={[{ value: "all", label: "All knowledge bases" }, ...(bases.data ?? []).map((b) => ({ value: b.id, label: b.name }))]} />
+          <SimpleSelect value={base} onValueChange={setBase} className="w-full sm:w-52" options={[{ value: "all", label: "All knowledge bases" }, ...(bases.data ?? []).map((b) => ({ value: b.id, label: b.name }))]} />
           <div className="ml-auto flex gap-2 text-xs">
             <Badge variant="success" dot>{counts.ready} ready</Badge>
             {counts.processing ? <Badge variant="accent" dot pulse>{counts.processing} processing</Badge> : null}

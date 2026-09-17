@@ -13,10 +13,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Sidebar />
       <MobileNav />
       <CommandPalette />
-      <div className={cn("flex min-h-screen flex-col transition-[padding] duration-200", collapsed ? "lg:pl-[68px]" : "lg:pl-[248px]")}>
+      <div className={cn("flex min-h-screen min-w-0 flex-col transition-[padding] duration-200", collapsed ? "lg:pl-[68px]" : "lg:pl-[248px]")}>
         <Topbar />
-        <main className="flex-1 px-4 py-6 lg:px-8 lg:py-8">
-          <div className="mx-auto w-full max-w-[1480px] animate-fade-in">{children}</div>
+        <main className="min-w-0 flex-1 px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8 lp-safe-bottom">
+          <div className="mx-auto w-full min-w-0 max-w-[1480px] animate-fade-in">{children}</div>
         </main>
       </div>
     </div>

@@ -49,7 +49,7 @@ function CampaignCard({ c, onChange }: { c: Campaign; onChange: () => void }) {
         <div className="mb-1 flex justify-between text-xs text-muted"><span>{formatNumber(c.stats.attempted)} of {formatNumber(c.totalContacts)} contacts</span><span>{progress.toFixed(0)}%</span></div>
         <Progress value={progress} tone={c.status === "running" ? "primary" : "accent"} />
       </div>
-      <div className="mt-4 grid grid-cols-4 gap-2 text-center">
+      <div className="mt-4 grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
         {[["Answered", c.stats.answered], ["Qualified", c.stats.qualified], ["Booked", c.stats.appointments], ["Conv.", formatPercent(conv)]].map(([l, v]) => (
           <div key={String(l)} className="rounded-lg bg-surface-2/60 py-2"><p className="text-sm font-semibold tabular-nums">{typeof v === "number" ? formatNumber(v) : v}</p><p className="text-[10px] text-muted">{l}</p></div>
         ))}

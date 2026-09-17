@@ -13,7 +13,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex items-center text-muted",
+      "inline-flex max-w-full items-center overflow-x-auto text-muted lp-scrollbar-none",
       variant === "pill" ? "h-9 gap-0.5 rounded-lg border border-border bg-background-subtle p-1" : "h-10 gap-4 border-b border-border w-full justify-start",
       className,
     )}
@@ -28,7 +28,7 @@ const TabsTrigger = React.forwardRef<React.ElementRef<typeof TabsPrimitive.Trigg
     <TabsPrimitive.Trigger
       ref={ref}
       className={cn(
-        "inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4",
+        "inline-flex shrink-0 items-center justify-center gap-1.5 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4",
         // pill
         "group-data-[variant=pill]/tabs:rounded-md rounded-md px-3 py-1 data-[state=active]:bg-surface-2 data-[state=active]:text-foreground data-[state=active]:shadow-sm hover:text-foreground",
         // underline (applied via parent data attr)

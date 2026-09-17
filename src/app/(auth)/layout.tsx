@@ -36,7 +36,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <p className="text-xs text-faint">© {new Date().getFullYear()} {COMPANY_NAME}. All rights reserved.</p>
       </aside>
 
-      <main className="flex flex-col items-center justify-center px-6 py-12">
+      <main className="flex flex-col items-center justify-center px-4 py-8 sm:px-6 sm:py-12">
         <div className="mb-8 lg:hidden">
           <Logo />
         </div>

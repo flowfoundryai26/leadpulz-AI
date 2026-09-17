@@ -22,7 +22,7 @@ export function DateRangeSelector({ className }: { className?: string }) {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   return (
-    <div className={cn("inline-flex items-center gap-0.5 rounded-lg border border-border bg-background-subtle p-1", className)}>
+    <div className={cn("inline-flex flex-wrap items-center gap-0.5 rounded-lg border border-border bg-background-subtle p-1", className)}>
       {ranges.map((r) => (
         <button
           key={r.key}
