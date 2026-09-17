@@ -37,14 +37,14 @@ export function StatCard({ label, value, delta, deltaLabel = "vs previous period
   const positive = delta !== undefined && (invertDelta ? delta < 0 : delta > 0);
   const negative = delta !== undefined && (invertDelta ? delta > 0 : delta < 0);
   return (
-    <div className={cn("group relative overflow-hidden rounded-2xl border border-border bg-surface p-5 shadow-card transition-colors hover:border-border-strong", className)}>
+    <div className={cn("group relative min-w-0 overflow-hidden rounded-2xl border border-border bg-surface p-4 shadow-card transition-colors hover:border-border-strong sm:p-5", className)}>
       <div className="flex items-start justify-between gap-3">
-        <p className="text-[13px] font-medium text-muted">{label}</p>
-        {icon ? <span className="flex size-8 items-center justify-center rounded-lg bg-primary-soft text-[#a3a3ff] [&_svg]:size-4">{icon}</span> : null}
+        <p className="min-w-0 truncate text-xs font-medium text-muted sm:text-[13px]">{label}</p>
+        {icon ? <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-[#a3a3ff] [&_svg]:size-4">{icon}</span> : null}
       </div>
       <div className="mt-2 flex items-end justify-between gap-2">
-        <p className={cn("font-semibold tracking-tight text-foreground tabular-nums", size === "lg" ? "text-3xl" : "text-2xl")}>{value}</p>
-        {sparkline?.length ? <Sparkline data={sparkline} positive={!negative} /> : null}
+        <p className={cn("min-w-0 truncate font-semibold tracking-tight text-foreground tabular-nums", size === "lg" ? "text-2xl sm:text-3xl" : "text-xl sm:text-2xl")}>{value}</p>
+        {sparkline?.length ? <span className="hidden sm:block"><Sparkline data={sparkline} positive={!negative} /></span> : null}
       </div>
       {delta !== undefined ? (
         <div className="mt-2 flex items-center gap-1.5 text-xs">
@@ -59,7 +59,7 @@ export function StatCard({ label, value, delta, deltaLabel = "vs previous period
             {positive ? <ArrowUpRight className="size-3" /> : negative ? <ArrowDownRight className="size-3" /> : <Minus className="size-3" />}
             {Math.abs(delta).toFixed(1)}%
           </span>
-          <span className="text-muted">{deltaLabel}</span>
+          <span className="hidden text-muted sm:inline">{deltaLabel}</span>
         </div>
       ) : hint ? (
         <p className="mt-2 text-xs text-muted">{hint}</p>
@@ -75,7 +75,7 @@ export function KpiCard({ kpi, icon, sparkline }: { kpi: KpiValue; icon?: React.
 
 export function StatCardSkeleton() {
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5">
+    <div className="rounded-2xl border border-border bg-surface p-4 sm:p-5">
       <Skeleton className="h-3.5 w-24" />
       <Skeleton className="mt-3 h-7 w-32" />
       <Skeleton className="mt-3 h-4 w-40" />

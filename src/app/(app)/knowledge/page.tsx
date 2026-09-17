@@ -143,7 +143,7 @@ export default function KnowledgePage() {
         <div className="flex flex-wrap items-center gap-2">
           <Input placeholder="Search documents…" value={q} onChange={(e) => setQ(e.target.value)} leftIcon={<Search />} className="w-full sm:w-64" />
           <SimpleSelect value={base} onValueChange={setBase} className="w-full sm:w-52" options={[{ value: "all", label: "All knowledge bases" }, ...(bases.data ?? []).map((b) => ({ value: b.id, label: b.name }))]} />
-          <div className="ml-auto flex gap-2 text-xs">
+          <div className="flex flex-wrap gap-2 text-xs sm:ml-auto">
             <Badge variant="success" dot>{counts.ready} ready</Badge>
             {counts.processing ? <Badge variant="accent" dot pulse>{counts.processing} processing</Badge> : null}
             {counts.error ? <Badge variant="danger" dot>{counts.error} error</Badge> : null}

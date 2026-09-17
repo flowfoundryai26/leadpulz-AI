@@ -89,7 +89,7 @@ export default function DashboardPage() {
       {kpis.error ? (
         <ErrorState error={kpis.error} onRetry={kpis.refetch} compact />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           {kpis.loading || !kpis.data
             ? Array.from({ length: 8 }).map((_, i) => <StatCardSkeleton key={i} />)
             : kpis.data.map((k) => <KpiCard key={k.key} kpi={k} icon={kpiIcons[k.key]} sparkline={sparklines[k.key]} />)}
@@ -98,7 +98,7 @@ export default function DashboardPage() {
 
       <LiveAgentActivity />
 
-      <div className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         <Card>
           <CardHeader className="flex-row items-start justify-between">
             <div>

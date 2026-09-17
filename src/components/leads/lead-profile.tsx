@@ -69,7 +69,7 @@ export function LeadProfile({ leadId }: { leadId: string }) {
         }
       />
 
-      <div className="grid gap-6 xl:grid-cols-[340px_1fr]">
+      <div className="grid gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
         {/* Left column */}
         <div className="space-y-6">
           <Card>

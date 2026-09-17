@@ -78,7 +78,7 @@ export function BehaviorTab({ agent, onChange }: { agent: Agent; onChange: (patc
         </CardHeader>
         <CardContent className="space-y-3">
           {b.transferRules.map((r) => (
-            <div key={r.id} className="grid gap-3 rounded-xl border border-border bg-surface-2/40 p-3 sm:grid-cols-[1fr_2fr_1fr_auto]">
+            <div key={r.id} className="grid gap-3 rounded-xl border border-border bg-surface-2/40 p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)_auto]">
               <Input value={r.label} onChange={(e) => setRule(r.id, { label: e.target.value })} placeholder="Label" />
               <Input value={r.condition} onChange={(e) => setRule(r.id, { condition: e.target.value })} placeholder="When the customer…" />
               <Input value={r.destination} onChange={(e) => setRule(r.id, { destination: e.target.value })} placeholder="+91…" className="font-mono" />
@@ -123,12 +123,12 @@ export function BehaviorTab({ agent, onChange }: { agent: Agent; onChange: (patc
               const day = b.businessHours.days.find((x) => x.day === d)!;
               const update = (patch: Partial<typeof day>) => set({ businessHours: { ...b.businessHours, days: b.businessHours.days.map((x) => (x.day === d ? { ...x, ...patch } : x)) } });
               return (
-                <div key={d} className="flex items-center gap-3 text-sm">
+                <div key={d} className="flex items-center gap-2 text-sm sm:gap-3">
                   <Switch checked={day.enabled} onCheckedChange={(v) => update({ enabled: v })} aria-label={`Enable ${dayNames[d]}`} />
-                  <span className="w-9 text-foreground-secondary">{dayNames[d]}</span>
-                  <Input type="time" value={day.open} onChange={(e) => update({ open: e.target.value })} disabled={!day.enabled} className="h-8 w-28" />
+                  <span className="w-9 shrink-0 text-foreground-secondary">{dayNames[d]}</span>
+                  <Input type="time" value={day.open} onChange={(e) => update({ open: e.target.value })} disabled={!day.enabled} className="h-8 min-w-0 flex-1 sm:w-28 sm:flex-none" />
                   <span className="text-muted">–</span>
-                  <Input type="time" value={day.close} onChange={(e) => update({ close: e.target.value })} disabled={!day.enabled} className="h-8 w-28" />
+                  <Input type="time" value={day.close} onChange={(e) => update({ close: e.target.value })} disabled={!day.enabled} className="h-8 min-w-0 flex-1 sm:w-28 sm:flex-none" />
                 </div>
               );
             })}

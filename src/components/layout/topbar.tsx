@@ -53,9 +53,9 @@ export function WorkspaceSelector() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button type="button" className="hidden md:inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-foreground-secondary hover:bg-surface-2 hover:text-foreground">
+        <button type="button" className="hidden shrink-0 md:inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-foreground-secondary hover:bg-surface-2 hover:text-foreground">
           <span className="size-1.5 rounded-full bg-success" />
-          <span className="max-w-[180px] truncate">{current?.name ?? "Workspace"}</span>
+          <span className="max-w-[120px] truncate lg:max-w-[180px]">{current?.name ?? "Workspace"}</span>
           <ChevronDown className="size-3.5 text-muted" />
         </button>
       </DropdownMenuTrigger>
@@ -130,7 +130,7 @@ export function NotificationCenter() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button type="button" className="relative flex size-9 items-center justify-center rounded-lg text-foreground-secondary hover:bg-surface-2 hover:text-foreground" aria-label="Notifications">
+        <button type="button" className="relative flex size-9 shrink-0 items-center justify-center rounded-lg text-foreground-secondary hover:bg-surface-2 hover:text-foreground" aria-label="Notifications">
           <Bell className="size-[18px]" />
           {unread > 0 ? (
             <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-white ring-2 ring-background">
@@ -197,7 +197,7 @@ export function Topbar({ title }: { title?: string }) {
       <button
         type="button"
         onClick={() => setCommandOpen(true)}
-        className="ml-auto hidden h-9 w-full max-w-[420px] items-center gap-2 rounded-lg border border-border bg-background-subtle px-3 text-left text-sm text-muted transition-colors hover:border-border-strong hover:text-foreground-secondary sm:flex"
+        className="ml-auto hidden h-9 w-full min-w-0 max-w-[420px] items-center gap-2 rounded-lg border border-border bg-background-subtle px-3 text-left text-sm text-muted transition-colors hover:border-border-strong hover:text-foreground-secondary sm:flex"
       >
         <Search className="size-4" />
         <span className="flex-1 truncate">Search leads, calls, agents…</span>
@@ -218,7 +218,7 @@ export function Topbar({ title }: { title?: string }) {
       <QuickCreate />
       <NotificationCenter />
       <Tip content="Help & documentation">
-        <Link href="/help" className="hidden sm:flex size-9 items-center justify-center rounded-lg text-foreground-secondary hover:bg-surface-2 hover:text-foreground" aria-label="Help">
+        <Link href="/help" className="hidden size-9 shrink-0 items-center justify-center rounded-lg text-foreground-secondary hover:bg-surface-2 hover:text-foreground sm:flex" aria-label="Help">
           <HelpCircle className="size-[18px]" />
         </Link>
       </Tip>
@@ -232,7 +232,7 @@ function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button type="button" className="flex items-center gap-2 rounded-lg p-1 hover:bg-surface-2" aria-label="User menu">
+        <button type="button" className="flex shrink-0 items-center gap-2 rounded-lg p-1 hover:bg-surface-2" aria-label="User menu">
           <span className="flex size-7 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-[11px] font-bold text-white">
             {user?.fullName
               ?.split(" ")

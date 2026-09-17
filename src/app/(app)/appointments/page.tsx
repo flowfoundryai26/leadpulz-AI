@@ -118,16 +118,16 @@ function AppointmentsContent() {
     <div>
       <PageHeader title="Appointments" description="Bookings made by your AI agents and your team, synced with your calendar." actions={<Button onClick={() => setBookOpen(true)}><CalendarPlus /> Book Appointment</Button>} />
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {[["Today", stats.today, <Calendar key="a" />], ["Upcoming", stats.week, <Clock key="b" />], ["Booked by AI", stats.byAi, <Bot key="c" />], ["No-shows (30d)", stats.noShow, <XCircle key="d" />]].map(([l, v, i]) => (
-          <Card key={String(l)} className="flex items-center gap-4 p-4">
-            <span className="flex size-10 items-center justify-center rounded-xl bg-primary-soft text-[#a3a3ff] [&_svg]:size-5">{i as React.ReactNode}</span>
-            <div><p className="text-xs text-muted">{l as string}</p><p className="text-2xl font-semibold tabular-nums">{loading ? "—" : (v as number)}</p></div>
+          <Card key={String(l)} className="flex items-center gap-3 p-3 sm:gap-4 sm:p-4">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-[#a3a3ff] [&_svg]:size-5 sm:size-10">{i as React.ReactNode}</span>
+            <div className="min-w-0"><p className="truncate text-xs text-muted">{l as string}</p><p className="text-xl font-semibold tabular-nums sm:text-2xl">{loading ? "—" : (v as number)}</p></div>
           </Card>
         ))}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_300px]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
         <div className="space-y-4">
           <CalendarToolbar view={view} setView={setView} cursor={cursor} setCursor={setCursor} />
           {error ? <ErrorState error={error} onRetry={refetch} /> : loading ? <Skeleton className="h-[560px] rounded-2xl" /> : view === "month" ? (

@@ -50,7 +50,7 @@ export default function NewAgentPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <PageHeader breadcrumbs={[{ label: "AI Agents", href: "/agents" }, { label: "New agent" }]} title="Create a new AI agent" description="Start from a template and customise everything in the builder." />
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div>
           {loading ? (
             <div className="grid gap-3 sm:grid-cols-2">{[0, 1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className="h-24 rounded-2xl" />)}</div>

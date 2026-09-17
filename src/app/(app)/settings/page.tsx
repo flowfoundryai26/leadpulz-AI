@@ -35,7 +35,7 @@ function SettingsContent() {
   return (
     <div>
       <PageHeader title="Settings" description="Manage your profile, organization, AI defaults, security and developer access." />
-      <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
+      <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
         <nav className="flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible" aria-label="Settings sections">
           {settingsSections.map((s) => (
             <button key={s.key} type="button" onClick={() => router.replace(`/settings?section=${s.key}`)} className={cn("whitespace-nowrap rounded-lg px-3 py-2 text-left text-sm transition-colors", section === s.key ? "bg-primary-soft font-medium text-foreground" : "text-foreground-secondary hover:bg-surface-2 hover:text-foreground")}>

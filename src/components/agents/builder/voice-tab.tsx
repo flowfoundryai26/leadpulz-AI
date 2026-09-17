@@ -29,7 +29,7 @@ export function VoiceTab({ agent, onChange }: { agent: Agent; onChange: (patch: 
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
       <div className="space-y-6">
         <Card>
           <CardHeader>

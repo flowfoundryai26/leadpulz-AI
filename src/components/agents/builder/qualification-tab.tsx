@@ -17,7 +17,7 @@ export function QualificationTab({ agent, onChange }: { agent: Agent; onChange: 
   const totalWeight = q.questions.reduce((a, b) => a + b.weight, 0);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
       <Card>
         <CardHeader className="flex-row items-start justify-between">
           <div>
@@ -33,7 +33,7 @@ export function QualificationTab({ agent, onChange }: { agent: Agent; onChange: 
             <div key={x.id} className="rounded-xl border border-border bg-surface-2/40 p-3">
               <div className="flex items-start gap-2">
                 <GripVertical className="mt-2.5 size-4 shrink-0 text-faint" />
-                <div className="grid flex-1 gap-3 sm:grid-cols-[1fr_180px]">
+                <div className="grid flex-1 gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
                   <Input value={x.question} onChange={(e) => setQ(x.id, { question: e.target.value })} placeholder={`Question ${i + 1}`} />
                   <Input value={x.field} onChange={(e) => setQ(x.id, { field: e.target.value })} placeholder="crm_field" className="font-mono text-xs" />
                 </div>

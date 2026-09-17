@@ -63,7 +63,7 @@ export default function ConversationsPage() {
     <div>
       <PageHeader title="Conversations" description="Every customer interaction across voice, WhatsApp, SMS and email — one unified inbox." />
       {/* Master/detail: phones show one pane at a time, desktop shows both. */}
-      <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
+      <div className="grid gap-4 lg:grid-cols-[360px_minmax(0,1fr)]">
         <Card className={cn("flex max-h-[75dvh] min-h-[320px] flex-col overflow-hidden", selected && "hidden lg:flex")}>
           <div className="space-y-2 border-b border-border p-3">
             <Input placeholder="Search conversations…" value={q} onChange={(e) => setQ(e.target.value)} leftIcon={<Search />} />
@@ -115,10 +115,15 @@ export default function ConversationsPage() {
                 <Avatar name={active.name} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold">{active.name}</p>
-                  <p className="flex items-center gap-1.5 text-xs text-muted"><span className="[&_svg]:size-3">{channelMeta[active.channel].icon}</span>{channelMeta[active.channel].label} · handled by {active.agent}</p>
+                  <p className="flex items-center gap-1.5 truncate text-xs text-muted"><span className="shrink-0 [&_svg]:size-3">{channelMeta[active.channel].icon}</span><span className="truncate">{channelMeta[active.channel].label} · handled by {active.agent}</span></p>
                 </div>
-                <Badge variant="muted">{channelMeta[active.channel].label}</Badge>
-                {active.call ? <Link href={`/calls/${active.call.id}`} className="shrink-0 text-xs text-[#a3a3ff] hover:underline">Open call details</Link> : null}
+                <Badge variant="muted" className="hidden sm:inline-flex">{channelMeta[active.channel].label}</Badge>
+                {active.call ? (
+                  <Link href={`/calls/${active.call.id}`} className="shrink-0 text-xs text-[#a3a3ff] hover:underline">
+                    <span className="sm:hidden">Details</span>
+                    <span className="hidden sm:inline">Open call details</span>
+                  </Link>
+                ) : null}
               </div>
               <div className="flex-1 overflow-y-auto p-3 sm:p-4">
                 {active.call ? (

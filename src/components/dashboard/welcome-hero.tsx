@@ -20,7 +20,7 @@ export function WelcomeHero() {
       <button type="button" onClick={() => setFirstVisitSeen(true)} className="absolute right-4 top-4 rounded-md p-1.5 text-muted hover:bg-surface-2 hover:text-foreground" aria-label="Dismiss">
         <X className="size-4" />
       </button>
-      <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-center">
         <div>
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary-soft px-3 py-1 text-xs font-medium text-[#c7c7ff]">
             <Bot className="size-3.5" /> AI Revenue Operations Platform

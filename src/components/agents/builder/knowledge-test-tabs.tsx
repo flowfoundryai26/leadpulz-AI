@@ -20,7 +20,7 @@ export function KnowledgeTab({ agent, onChange }: { agent: Agent; onChange: (pat
   const bases = useQuery(() => services.knowledge.listBases(), []);
   const docs = useQuery(() => services.knowledge.listDocuments(), []);
   return (
-    <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
+    <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
       <Card>
         <CardHeader>
           <CardTitle>Knowledge bases</CardTitle>
@@ -120,7 +120,7 @@ export function TestTab({ agent }: { agent: Agent }) {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
+    <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
       <div className="space-y-3">
         <Card className="p-4">
           <div className="flex items-center justify-between text-sm">

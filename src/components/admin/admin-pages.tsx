@@ -36,7 +36,7 @@ export function AdminOverview() {
   return (
     <div>
       <PageHeader title="Platform overview" description="Health of the LeadPulz business across all tenants." />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {adminKpis.map((k) => <StatCard key={k.key} label={k.label} value={formatKpi(k.value, k.format)} delta={((k.value - k.previous) / k.previous) * 100} invertDelta={k.key === "errors"} />)}
       </div>
       <div className="mt-6 grid gap-6 xl:grid-cols-3">

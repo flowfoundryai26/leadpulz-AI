@@ -57,10 +57,10 @@ function AnalyticsContent() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
             {kpis.loading || !kpis.data ? Array.from({ length: 8 }).map((_, i) => <StatCardSkeleton key={i} />) : kpis.data.map((k) => <KpiCard key={k.key} kpi={k} />)}
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
             {costs.loading || !costs.data ? Array.from({ length: 4 }).map((_, i) => <StatCardSkeleton key={i} />) : (
               <>
                 <StatCard label="Answered rate" value={formatPercent(costs.data.answeredRate)} delta={1.8} />
@@ -95,7 +95,7 @@ function AnalyticsContent() {
             <CardHeader><CardTitle>Campaign performance</CardTitle><CardDescription>Attempted vs answered vs booked per campaign.</CardDescription></CardHeader>
             <CardContent>{campaigns.loading ? <Skeleton className="h-64" /> : <BarSeriesChart height={300} data={campaignRows} xKey="label" series={[{ key: "attempted", label: "Attempted", color: SERIES[1] }, { key: "answered", label: "Answered", color: SERIES[2] }, { key: "appointments", label: "Appointments", color: SERIES[3] }]} />}</CardContent>
           </Card>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
             {(campaigns.data ?? []).filter((c) => c.stats.attempted).map((c) => <StatCard key={c.id} label={c.name} value={formatPercent(c.stats.answered ? (c.stats.appointments / c.stats.answered) * 100 : 0)} hint={`${formatNumber(c.stats.appointments)} appointments from ${formatNumber(c.stats.answered)} answered`} />)}
           </div>
         </TabsContent>

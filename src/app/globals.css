@@ -208,6 +208,24 @@ body {
   overflow-x: clip;
 }
 
+/* A bare `.grid` (columns only defined at a breakpoint) otherwise gets an
+   implicit `auto` track that grows to the widest nowrap/truncated child and
+   pushes past the viewport on phones. Default to a single minmax(0,1fr)
+   column; Tailwind's grid-cols-* utilities override this at every breakpoint. */
+@layer base {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Horizontal scrollers must be a containing block: an absolutely positioned
+     descendant (e.g. Tailwind's `sr-only`) inside a far-off column would
+     otherwise anchor to the page and make the whole document scroll sideways. */
+  .overflow-x-auto,
+  .overflow-x-scroll {
+    position: relative;
+  }
+}
+
 /* Horizontal scroll strip (tab bars, chip rows, kanban) without a visible bar */
 .lp-scrollbar-none {
   scrollbar-width: none;

@@ -172,9 +172,9 @@ export function OnboardingWizard() {
 
   return (
     <div className="min-h-screen lp-ambient">
-      <header className="flex h-16 items-center justify-between border-b border-border/60 px-6">
+      <header className="flex h-16 items-center justify-between gap-4 border-b border-border/60 px-4 sm:px-6">
         <Logo />
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-1 xl:flex">
           {steps.map((s, i) => (
             <div key={s} className="flex items-center">
               <button
@@ -189,18 +189,18 @@ export function OnboardingWizard() {
             </div>
           ))}
         </div>
-        <Link href="/dashboard" className="text-xs text-muted hover:text-foreground">
+        <Link href="/dashboard" className="shrink-0 text-xs text-muted hover:text-foreground">
           Skip setup
         </Link>
       </header>
-      <div className="md:hidden px-6 pt-4">
+      <div className="px-4 pt-4 sm:px-6 xl:hidden">
         <Progress value={((step + 1) / steps.length) * 100} />
         <p className="mt-1.5 text-[11px] text-muted">
           Step {step + 1} of {steps.length} · {steps[step]}
         </p>
       </div>
 
-      <main className="mx-auto w-full max-w-4xl px-6 py-10 animate-slide-up" key={step}>
+      <main className="mx-auto w-full max-w-4xl px-4 py-8 animate-slide-up sm:px-6 sm:py-10" key={step}>
         {/* Step 1 — Welcome */}
         {step === 0 ? (
           <div className="text-center">
@@ -324,7 +324,7 @@ export function OnboardingWizard() {
         {/* Step 5 — Voice */}
         {step === 4 ? (
           <StepFrame title="Configure the voice" description="Pick how your agent sounds. You can fine-tune responsiveness and interruption handling later in the Agent Builder.">
-            <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
               <div className="space-y-5">
                 <Field label="Voice">
                   <div className="grid gap-2 sm:grid-cols-2">
@@ -392,7 +392,7 @@ export function OnboardingWizard() {
         {/* Step 6 — Knowledge */}
         {step === 5 ? (
           <StepFrame title="Connect your knowledge" description="Give your agent the facts it needs — services, pricing, policies and FAQs. Sources are indexed and ready in seconds.">
-            <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
               <div className="space-y-5">
                 <Field label="Website URL" hint="We'll crawl public pages and extract useful content.">
                   <div className="flex gap-2">
@@ -543,7 +543,7 @@ export function OnboardingWizard() {
         {/* Step 8 — Test */}
         {step === 7 ? (
           <StepFrame title="Test your agent" description={`Talk to ${agentName} before going live. Try asking about services, pricing or booking an appointment.`}>
-            <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
+            <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
               <div className="space-y-3">
                 <div className="rounded-2xl border border-border bg-surface/70 p-4">
                   <div className="flex items-center gap-3">

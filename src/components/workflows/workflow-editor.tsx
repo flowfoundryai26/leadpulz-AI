@@ -76,7 +76,7 @@ export function WorkflowEditor({ workflowId }: { workflowId?: string }) {
           </>
         }
       />
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-6">
           <Card>
             <CardContent className="grid gap-4 p-5 sm:grid-cols-2">

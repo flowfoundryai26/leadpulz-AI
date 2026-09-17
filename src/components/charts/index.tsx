@@ -338,7 +338,7 @@ export function FunnelChart({ stages, className }: { stages: Array<{ key: string
         const prev = stages[i - 1];
         const conv = prev ? (s.value / prev.value) * 100 : 100;
         return (
-          <div key={s.key} className="group grid grid-cols-[110px_1fr_88px] items-center gap-3 sm:grid-cols-[140px_1fr_110px]">
+          <div key={s.key} className="group grid grid-cols-[110px_minmax(0,1fr)_88px] items-center gap-3 sm:grid-cols-[140px_minmax(0,1fr)_110px]">
             <span className="truncate text-[13px] text-foreground-secondary group-hover:text-foreground">{s.label}</span>
             <div className="relative h-8 w-full">
               <div

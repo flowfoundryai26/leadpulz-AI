@@ -22,7 +22,7 @@ const channelAvailability: Record<Channel, "available" | "coming_soon"> = {
 
 export function AgentTab({ agent, onChange }: { agent: Agent; onChange: (patch: Partial<Agent>) => void }) {
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
       <Card>
         <CardHeader>
           <CardTitle>Identity</CardTitle>

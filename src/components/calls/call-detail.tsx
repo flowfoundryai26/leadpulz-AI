@@ -71,7 +71,7 @@ export function CallDetail({ callId }: { callId: string }) {
         }
       />
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
         <div className="space-y-6">
           {/* Overview */}
           <Card>

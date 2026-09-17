@@ -20,7 +20,7 @@ export function PromptTab({ agent, onChange }: { agent: Agent; onChange: (patch:
   const words = agent.systemPrompt.trim().split(/\s+/).filter(Boolean).length;
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
       <Card>
         <CardHeader className="flex-row items-start justify-between">
           <div>

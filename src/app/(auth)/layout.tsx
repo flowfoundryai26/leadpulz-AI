@@ -5,7 +5,7 @@ import { COMPANY_NAME } from "@/lib/constants";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid min-h-screen lg:grid-cols-[1.1fr_1fr]">
+    <div className="grid min-h-screen lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
       {/* Brand panel */}
       <aside className="relative hidden overflow-hidden border-r border-border lp-ambient lg:flex lg:flex-col lg:justify-between lg:p-12">
         <Link href="/">

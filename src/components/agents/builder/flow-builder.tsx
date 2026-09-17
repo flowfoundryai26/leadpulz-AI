@@ -164,7 +164,7 @@ export function FlowBuilder({ agentId }: { agentId: string }) {
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[200px_1fr_280px]">
+    <div className="grid gap-4 lg:grid-cols-[200px_minmax(0,1fr)_280px]">
       <aside className="rounded-2xl border border-border bg-surface p-3">
         <p className="px-1 text-[11px] font-semibold uppercase tracking-wider text-muted">Node types</p>
         <div className="mt-2 space-y-1">
